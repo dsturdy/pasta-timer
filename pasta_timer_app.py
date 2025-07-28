@@ -12,8 +12,8 @@ st.title("🍝 Pasta Timer")
 
 # --- Load default "done" assets ---
 ASSETS_DIR = "assets"
-DONE_IMG = os.path.join(ASSETS_DIR, "gnome.png")
-DONE_SND = os.path.join(ASSETS_DIR, "done.wav")
+DONE_IMG = os.path.join(ASSETS_DIR, "done.png")
+DONE_SND = os.path.join(ASSETS_DIR, "done.mp3")
 img_done = None
 snd_done = None
 if os.path.exists(DONE_IMG):
@@ -25,10 +25,10 @@ if os.path.exists(DONE_SND):
 
 # --- GIF URLs (static animations) ---
 GIF_URLS = {
-    'Hourglass':    'https://media.giphy.com/media/QdVmkR04rz7vbT3cx9/giphy.gif',
-    'Penguin':      'https://media.giphy.com/media/xvc8R0LCww4Ar4EWH9/giphy.gif',
     'Goat':         'https://media.giphy.com/media/Lqmp9tVPIvtyyKQneQ/giphy.gif',
+    'Hourglass':    'https://media.giphy.com/media/QdVmkR04rz7vbT3cx9/giphy.gif',
     'Running Man':  'https://media.giphy.com/media/c43fAlwzxxOVch2OTK/giphy.gif',
+    'Penguin':      'https://media.giphy.com/media/xvc8R0LCww4Ar4EWH9/giphy.gif',
 }
 
 # --- Pasta selection ---
@@ -49,18 +49,21 @@ else:
 
 # --- Prepare placeholders in columns ---
 col1, col2, col3, col4, col5 = st.columns(5)
+# Column 1 is digital timer
 dt_txt   = col1.empty()
 dt_prog  = col1.empty()
-goat_img = col2.empty()
-hg_img   = col3.empty()
-rm_img   = col4.empty()
-pn_img   = col5.empty()
+# Reordered GIF columns: Hourglass, Penguin, Goat, Running Man
+gif_hg   = col2.empty()
+gif_pn   = col3.empty()
+gif_goat = col4.empty()
+gif_rm   = col5.empty()
 
 # --- Display static GIFs before loop ---
-hg_img.image(GIF_URLS['Hourglass'])
-pn_img.image(GIF_URLS['Penguin'])
-goat_img.image(GIF_URLS['Goat'])
-rm_img.image(GIF_URLS['Running Man'])
+# Order: Hourglass, Penguin, Goat, Running Man
+gif_hg.image(GIF_URLS['Hourglass'])
+gif_pn.image(GIF_URLS['Penguin'])
+gif_goat.image(GIF_URLS['Goat'])
+gif_rm.image(GIF_URLS['Running Man'])
 
 # --- Run digital timer only ---
 if st.button("Start Timer"):
