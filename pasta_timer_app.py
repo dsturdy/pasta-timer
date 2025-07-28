@@ -25,10 +25,10 @@ if os.path.exists(DONE_SND):
 
 # --- GIF URLs (static animations) ---
 GIF_URLS = {
-    'Goat':         'https://media.giphy.com/media/Lqmp9tVPIvtyyKQneQ/giphy.gif',
     'Hourglass':    'https://media.giphy.com/media/QdVmkR04rz7vbT3cx9/giphy.gif',
-    'Running Man':  'https://media.giphy.com/media/c43fAlwzxxOVch2OTK/giphy.gif',
     'Penguin':      'https://media.giphy.com/media/xvc8R0LCww4Ar4EWH9/giphy.gif',
+    'Goat':         'https://media.giphy.com/media/Lqmp9tVPIvtyyKQneQ/giphy.gif',
+    'Running Man':  'https://media.giphy.com/media/c43fAlwzxxOVch2OTK/giphy.gif',
 }
 
 # --- Pasta selection ---
