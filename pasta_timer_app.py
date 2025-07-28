@@ -12,8 +12,8 @@ st.title("🍝 Pasta Timer")
 
 # --- Load default "done" assets ---
 ASSETS_DIR = "assets"
-DONE_IMG = os.path.join(ASSETS_DIR, "done.png")
-DONE_SND = os.path.join(ASSETS_DIR, "done.mp3")
+DONE_IMG = os.path.join(ASSETS_DIR, "gnome.png")
+DONE_SND = os.path.join(ASSETS_DIR, "done.wav")
 img_done = None
 snd_done = None
 if os.path.exists(DONE_IMG):
