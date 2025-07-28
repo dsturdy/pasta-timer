@@ -49,21 +49,17 @@ else:
 
 # --- Prepare placeholders in columns ---
 col1, col2, col3, col4, col5 = st.columns(5)
-dt_txt  = col1.empty()
-dt_prog = col1.empty()
+dt_txt   = col1.empty()
+dt_prog  = col1.empty()
 goat_img = col2.empty()
 hg_img   = col3.empty()
 rm_img   = col4.empty()
 pn_img   = col5.empty()
 
 # --- Display static GIFs before loop ---
-col2.markdown("**Goat**")
 goat_img.image(GIF_URLS['Goat'])
-col3.markdown("**Hourglass**")
 hg_img.image(GIF_URLS['Hourglass'])
-col4.markdown("**Running Man**")
 rm_img.image(GIF_URLS['Running Man'])
-col5.markdown("**Penguin**")
 pn_img.image(GIF_URLS['Penguin'])
 
 # --- Run digital timer only ---
@@ -72,7 +68,7 @@ if st.button("Start Timer"):
         rem = total - i
         mins, secs = divmod(rem, 60)
         ts = f"{mins:02d}:{secs:02d}"
-        dt_txt.markdown(f"**Digital**\n{ts}")
+        dt_txt.markdown(ts)
         dt_prog.progress(i / total)
         time.sleep(1)
     st.markdown("### ⏰ Done! Enjoy your pasta! 🍝")
