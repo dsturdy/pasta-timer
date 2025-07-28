@@ -1,104 +1,131 @@
 # pasta_timer_app.py
-# Streamlit app for selecting pasta by image, timing it with various clock styles, and showing a custom photo + sound when done
+# Streamlit app generating timer visuals in Python on the fly
 # To run: streamlit run pasta_timer_app.py
 
 import streamlit as st
 import time
+import math
+import matplotlib.pyplot as plt
+from io import BytesIO
+import os
 
 st.set_page_config(page_title="Pasta Timer", page_icon="🍝", layout="centered")
 st.title("🍝 Pasta Timer")
 
-# --- Upload custom "done" image and sound ---
-done_image = st.file_uploader(
-    "Upload an image to display when time's up", 
-    type=["png", "jpg", "jpeg"], key="done_img"
+# --- Static defaults (place your files in assets/) ---
+ASSETS_DIR = "assets"
+DEFAULT_DONE_IMAGE = os.path.join(ASSETS_DIR, "done.png")
+DEFAULT_DONE_SOUND = os.path.join(ASSETS_DIR, "done.mp3")
+
+# upload overrides
+uploaded_image = st.file_uploader(
+    "Optional: upload an image to display when time's up", 
+    type=["png","jpg","jpeg"], key="done_img"
 )
-done_sound = st.file_uploader(
-    "Upload a sound to play when time's up", 
-    type=["mp3", "wav", "ogg"], key="done_sound"
+uploaded_sound = st.file_uploader(
+    "Optional: upload a sound to play when time's up", 
+    type=["mp3","wav","ogg"], key="done_sound"
 )
 
-# --- Define pasta types with cook times and images ---
-pasta_types = {
-    "Spaghetti": {"time": 8 * 60, "img_path": "images/spaghetti.jpg"},
-    "Penne": {"time": 11 * 60, "img_path": "images/penne.jpg"},
-    "Fusilli": {"time": 10 * 60, "img_path": "images/fusilli.jpg"},
-    "Ravioli": {"time": 5 * 60, "img_path": "images/ravioli.jpg"},
-    "Custom": {"time": None, "img_path": None}
-}
-
-# --- Choose pasta ---
-st.markdown("## Choose your pasta by clicking the image below:")
-cols = st.columns(len(pasta_types))
-selected_pasta = None
-for idx, (name, opts) in enumerate(pasta_types.items()):
-    with cols[idx]:
-        if opts["img_path"]:
-            st.image(opts["img_path"], caption=name, use_column_width=True)
-        else:
-            st.write(name)
-        if st.button(name, key=f"select_{name}"):
-            selected_pasta = name
-
-# --- Once pasta is selected ---
-if selected_pasta:
-    if selected_pasta == "Custom":
-        minutes = st.number_input(
-            "Enter cooking time in minutes:", 
-            min_value=1, max_value=60, value=10
-        )
-        total_seconds = int(minutes * 60)
-        st.write(f"Custom time set: {minutes} minutes")
+# Determine which image and sound to use
+if uploaded_image:
+    done_image_bytes = uploaded_image.read()
+    done_image_to_show = done_image_bytes
+else:
+    # load static default file
+    if os.path.exists(DEFAULT_DONE_IMAGE):
+        with open(DEFAULT_DONE_IMAGE, "rb") as f:
+            done_image_to_show = f.read()
     else:
-        total_seconds = pasta_types[selected_pasta]["time"]
-        st.write(f"You chose {selected_pasta}. Cook time: {total_seconds//60} minutes.")
-    if pasta_types[selected_pasta]["img_path"]:
-        st.image(pasta_types[selected_pasta]["img_path"], width=200)
+        done_image_to_show = None
 
-    # --- Clock style options ---
-    clock_styles = [
-        "Digital", "Hourglass", "Analog", 
-        "Running Man", "Cuckoo Clock"
-    ]
-    style = st.selectbox(
-        "Choose a timer style:", clock_styles
-    )
+if uploaded_sound:
+    done_sound_bytes = uploaded_sound.read()
+    done_sound_to_play = done_sound_bytes
+else:
+    if os.path.exists(DEFAULT_DONE_SOUND):
+        with open(DEFAULT_DONE_SOUND, "rb") as f:
+            done_sound_to_play = f.read()
+    else:
+        done_sound_to_play = None
 
-    # placeholders
-    image_placeholder = st.empty()
-    time_placeholder = st.empty()
-    progress = None
-    if style == "Digital":
-        progress = st.progress(0)
+# pasta types
+types = {"Spaghetti":480, "Penne":660, "Fusilli":600, "Ravioli":300, "Custom":None}
+sel = st.selectbox("Pick your pasta:", list(types.keys()))
 
-    # --- Start timer ---
-    if st.button("Start Timer", key="start_timer"):
-        # show animation once for non-digital
-        if style != "Digital":
-            img_path = f"clocks/{style.lower().replace(' ', '_')}.gif"
-            image_placeholder.image(
-                img_path, caption=f"{style} Timer",
-                use_column_width=False, width=200
-            )
+if sel == "Custom":
+    mins = st.number_input("Cook time (minutes):", 1, 60, 10)
+    total = int(mins*60)
+else:
+    total = types[sel]
+    st.write(f"{sel} cooks for {total//60} minutes.")
 
-        for elapsed in range(total_seconds + 1):
-            remaining = total_seconds - elapsed
-            mins, secs = divmod(remaining, 60)
-            time_str = f"{mins:02d}:{secs:02d}"
+style = st.selectbox("Timer style:", ["Digital","Analog","Hourglass","Running Man","Cuckoo Clock"])
 
-            if style == "Digital":
-                image_placeholder.markdown(f"### ⏱ Time remaining: **{time_str}**")
-                progress.progress(elapsed / total_seconds)
-            else:
-                time_placeholder.markdown(f"**{time_str}**")
+# drawing functions
+def gen_analog(rem, tot):
+    fig,ax = plt.subplots()
+    ax.axis('off')
+    circle = plt.Circle((0.5,0.5),0.4, fill=False, linewidth=2)
+    ax.add_artist(circle)
+    frac = rem/tot
+    angle = 2*math.pi*frac - math.pi/2
+    x = 0.5 + 0.35*math.cos(angle)
+    y = 0.5 + 0.35*math.sin(angle)
+    ax.plot([0.5,x],[0.5,y],color='black',linewidth=3)
+    ax.set_aspect('equal')
+    buf=BytesIO(); plt.savefig(buf,format='png'); plt.close(fig); buf.seek(0)
+    return buf
 
-            time.sleep(1)
+def gen_hourglass(rem, tot):
+    fig,ax=plt.subplots(); ax.axis('off')
+    top=plt.Polygon([[0.2,0.8],[0.8,0.8],[0.5,0.5]],fill=None,edgecolor='black'); ax.add_patch(top)
+    bot=plt.Polygon([[0.2,0.2],[0.8,0.2],[0.5,0.5]],fill=None,edgecolor='black'); ax.add_patch(bot)
+    frac=rem/tot
+    y_top=0.5+0.3*frac
+    fill_top=plt.Polygon([[0.2,0.8],[0.8,0.8],[0.8,y_top],[0.2,y_top]],color='black'); ax.add_patch(fill_top)
+    frac2=1-frac
+    y_bot=0.2+0.3*frac2
+    fill_bot=plt.Polygon([[0.2,0.2],[0.8,0.2],[0.8,y_bot],[0.2,y_bot]],color='black'); ax.add_patch(fill_bot)
+    ax.set_aspect('equal')
+    buf=BytesIO(); plt.savefig(buf,format='png'); plt.close(fig); buf.seek(0)
+    return buf
 
-        # time's up
-        time_placeholder.markdown("### ⏰ Time's up! Enjoy your pasta! 🍝")
-        if done_sound:
-            st.audio(done_sound.read(), format=None)
-        if done_image:
-            st.image(done_image, use_column_width=True)
+def gen_running(rem, tot):
+    bar_len=30
+    pos=int((tot-rem)/tot*bar_len)
+    return '-'*pos + '🏃' + '-'*(bar_len-pos)
+
+def gen_cuckoo(rem, tot):
+    mins_passed=int((tot-rem)//60)
+    return '🕰️ ' + '🕊'*mins_passed
+
+# placeholders
+img_pl=st.empty(); txt_pl=st.empty(); prog=None
+if style=="Digital": prog=st.progress(0)
+
+if st.button("Start Timer"):
+    for elapsed in range(total+1):
+        rem=total-elapsed
+        m,s=divmod(rem,60); ts=f"{m:02d}:{s:02d}"
+        if style=="Digital":
+            txt_pl.markdown(f"### ⏱ {ts}")
+            prog.progress(elapsed/total)
+        elif style=="Analog":
+            img_pl.image(gen_analog(rem,total))
+            txt_pl.markdown(ts)
+        elif style=="Hourglass":
+            img_pl.image(gen_hourglass(rem,total))
+            txt_pl.markdown(ts)
+        elif style=="Running Man":
+            txt_pl.text(gen_running(rem,total))
         else:
-            st.balloons()
+            txt_pl.markdown(gen_cuckoo(rem,total)+" **"+ts+"**")
+        time.sleep(1)
+    txt_pl.markdown("### ⏰ Done! 🍝")
+    if done_sound_to_play:
+        st.audio(done_sound_to_play, format=None)
+    if done_image_to_show:
+        st.image(done_image_to_show)
+    else:
+        st.balloons()
