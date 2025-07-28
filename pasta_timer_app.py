@@ -33,7 +33,7 @@ GIF_URLS = {
     'Hourglass':    'https://media.giphy.com/media/QdVmkR04rz7vbT3cx9/giphy.gif',
     'Running Man':  'https://media.giphy.com/media/c43fAlwzxxOVch2OTK/giphy.gif',
     'Cuckoo Clock': 'https://media.giphy.com/media/xvc8R0LCww4Ar4EWH9/giphy.gif',
-    'Analog':       'https://media.giphy.com/media/Lqmp9tVPIvtyyKQneQ/giphy.gif',
+    'Goat':       'https://media.giphy.com/media/Lqmp9tVPIvtyyKQneQ/giphy.gif',
 }
 
 # --- Fallback draw function for Analog ---
