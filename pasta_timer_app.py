@@ -1,18 +1,10 @@
 # pasta_timer_app.py
-# Streamlit app: digital timer with static GIFs for other styles
+# Streamlit app: digital timer with static GIFs for other styles (Goat, Hourglass, Running Man, Penguin)
 # To run: streamlit run pasta_timer_app.py
 
 import streamlit as st
 import time
-import math
-import matplotlib.pyplot as plt
-from io import BytesIO
 import os
-import numpy as np
-try:
-    import imageio
-except ImportError:
-    imageio = None
 
 # --- Page config ---
 st.set_page_config(page_title="Pasta Timer", page_icon="🍝", layout="wide")
@@ -22,35 +14,22 @@ st.title("🍝 Pasta Timer")
 ASSETS_DIR = "assets"
 DONE_IMG = os.path.join(ASSETS_DIR, "gnome.png")
 DONE_SND = os.path.join(ASSETS_DIR, "done.wav")
-img_done = None; snd_done = None
+img_done = None
+snd_done = None
 if os.path.exists(DONE_IMG):
-    with open(DONE_IMG, 'rb') as f: img_done = f.read()
+    with open(DONE_IMG, "rb") as f:
+        img_done = f.read()
 if os.path.exists(DONE_SND):
-    with open(DONE_SND, 'rb') as f: snd_done = f.read()
+    with open(DONE_SND, "rb") as f:
+        snd_done = f.read()
 
 # --- GIF URLs (static animations) ---
 GIF_URLS = {
+    'Goat':         'https://media.giphy.com/media/Lqmp9tVPIvtyyKQneQ/giphy.gif',
     'Hourglass':    'https://media.giphy.com/media/QdVmkR04rz7vbT3cx9/giphy.gif',
     'Running Man':  'https://media.giphy.com/media/c43fAlwzxxOVch2OTK/giphy.gif',
-    'Cuckoo Clock': 'https://media.giphy.com/media/xvc8R0LCww4Ar4EWH9/giphy.gif',
-    'Goat':       'https://media.giphy.com/media/Lqmp9tVPIvtyyKQneQ/giphy.gif',
+    'Penguin':      'https://media.giphy.com/media/xvc8R0LCww4Ar4EWH9/giphy.gif',
 }
-
-# --- Fallback draw function for Analog ---
-def draw_analog(rem, total):
-    frac = rem/total
-    fig, ax = plt.subplots(figsize=(2,2))
-    ax.axis('off')
-    circle = plt.Circle((0.5,0.5),0.4, fill=False, linewidth=2)
-    ax.add_artist(circle)
-    angle = 2*math.pi*frac - math.pi/2
-    x = 0.5 + 0.35*math.cos(angle)
-    y = 0.5 + 0.35*math.sin(angle)
-    ax.plot([0.5,x],[0.5,y], color='black', linewidth=2)
-    ax.set_aspect('equal')
-    buf = BytesIO(); plt.savefig(buf, format='png', bbox_inches='tight', pad_inches=0)
-    plt.close(fig); buf.seek(0)
-    return buf
 
 # --- Pasta selection ---
 pasta_times = {
@@ -70,18 +49,22 @@ else:
 
 # --- Prepare placeholders in columns ---
 col1, col2, col3, col4, col5 = st.columns(5)
-dt_txt  = col1.empty(); dt_prog  = col1.empty()
-and_img = col2.empty()
-hg_img  = col3.empty()
-rn_img  = col4.empty()
-ck_img  = col5.empty()
+dt_txt  = col1.empty()
+dt_prog = col1.empty()
+goat_img = col2.empty()
+hg_img   = col3.empty()
+rm_img   = col4.empty()
+pn_img   = col5.empty()
 
-# --- Display static GIFs or initial fallback before loop ---
-# Analog fallback uses draw at full time
-and_img.image(draw_analog(total, total))
+# --- Display static GIFs before loop ---
+col2.markdown("**Goat**")
+goat_img.image(GIF_URLS['Goat'])
+col3.markdown("**Hourglass**")
 hg_img.image(GIF_URLS['Hourglass'])
-rn_img.image(GIF_URLS['Running Man'])
-ck_img.image(GIF_URLS['Cuckoo Clock'])
+col4.markdown("**Running Man**")
+rm_img.image(GIF_URLS['Running Man'])
+col5.markdown("**Penguin**")
+pn_img.image(GIF_URLS['Penguin'])
 
 # --- Run digital timer only ---
 if st.button("Start Timer"):
@@ -89,12 +72,13 @@ if st.button("Start Timer"):
         rem = total - i
         mins, secs = divmod(rem, 60)
         ts = f"{mins:02d}:{secs:02d}"
-        # Digital updates
         dt_txt.markdown(f"**Digital**\n{ts}")
         dt_prog.progress(i / total)
         time.sleep(1)
-    # Done
     st.markdown("### ⏰ Done! Enjoy your pasta! 🍝")
-    if snd_done: st.audio(snd_done)
-    if img_done: st.image(img_done)
-    else: st.balloons()
+    if snd_done:
+        st.audio(snd_done)
+    if img_done:
+        st.image(img_done)
+    else:
+        st.balloons()
