@@ -34,12 +34,12 @@ GIF_URLS = {
 # --- Pasta selection ---
 pasta_times = {
     "Spaghetti": 8*60,
-    "Penne":    11*60,
-    "Fusilli":  10*60,
-    "Ravioli":   5*60,
-    "Bow Tie":   11*60,
+    "Penne": 11*60,
+    "Fusilli": 10*60,
+    "Ravioli": 5*60,
+    "Bow Tie Pasta": 11*60,
     "Spongebob Squarepants Shaped Macaroni & Cheese": 11*60,
-    "Custom":   None
+    "Custom": None
 }
 sel = st.selectbox("Pick your pasta:", list(pasta_times.keys()))
 if sel == "Custom":
@@ -51,22 +51,16 @@ else:
 
 # --- Prepare placeholders in columns ---
 col1, col2, col3, col4, col5 = st.columns(5)
-# Column 1 is digital timer
+# Column 1: Digital timer
 dt_txt   = col1.empty()
 dt_prog  = col1.empty()
-# Reordered GIF columns: Hourglass, Penguin, Running Man, Goat
-col1, col2, col3, col4, col5 = st.columns(5)
-# Column 1 is digital timer
-dt_txt   = col1.empty()
-dt_prog  = col1.empty()
-# GIF placeholders in desired order
+# Columns 2-5: Hourglass, Penguin, Running Man, Goat
 gif_hg   = col2.empty()
 gif_pn   = col3.empty()
 gif_rm   = col4.empty()
 gif_goat = col5.empty()
 
 # --- Display static GIFs before loop ---
-# Order: Hourglass, Penguin, Running Man, Goat
 gif_hg.image(GIF_URLS['Hourglass'])
 gif_pn.image(GIF_URLS['Penguin'])
 gif_rm.image(GIF_URLS['Running Man'])
