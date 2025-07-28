@@ -34,7 +34,7 @@ if os.path.exists(DONE_SND):
 
 # --- GIF URLs (publicly accessible) ---
 GIF_URLS = {
-    'Hourglass':    'https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWFtcWlkcTlseDAxYnZybXg5NXJ5MXlremU2dXNpNmE1ZGJmbTY3ciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3QmY3Q9Zw/gLjD6hjRaLcFslzpvR/giphy.gif',
+    'Hourglass':    'https://media.giphy.com/media/fjI4obbsgcvGNyg0F2/giphy.gif',
     'Running Man':  'https://media.giphy.com/media/l41lI4bYmcsPJX9Go/giphy.gif',
     'Cuckoo Clock': 'https://media.giphy.com/media/26uf6oM3B8YXxZ7GM/giphy.gif',
     'Analog':       None,   # fallback to Matplotlib draw
