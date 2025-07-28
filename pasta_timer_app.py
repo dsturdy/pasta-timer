@@ -57,10 +57,10 @@ rm_img   = col4.empty()
 pn_img   = col5.empty()
 
 # --- Display static GIFs before loop ---
-goat_img.image(GIF_URLS['Goat'])
 hg_img.image(GIF_URLS['Hourglass'])
-rm_img.image(GIF_URLS['Running Man'])
 pn_img.image(GIF_URLS['Penguin'])
+goat_img.image(GIF_URLS['Goat'])
+rm_img.image(GIF_URLS['Running Man'])
 
 # --- Run digital timer only ---
 if st.button("Start Timer"):
