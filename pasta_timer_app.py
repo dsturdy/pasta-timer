@@ -52,18 +52,23 @@ col1, col2, col3, col4, col5 = st.columns(5)
 # Column 1 is digital timer
 dt_txt   = col1.empty()
 dt_prog  = col1.empty()
-# Reordered GIF columns: Hourglass, Penguin, Goat, Running Man
+# Reordered GIF columns: Hourglass, Penguin, Running Man, Goat
+col1, col2, col3, col4, col5 = st.columns(5)
+# Column 1 is digital timer
+dt_txt   = col1.empty()
+dt_prog  = col1.empty()
+# GIF placeholders in desired order
 gif_hg   = col2.empty()
 gif_pn   = col3.empty()
-gif_goat = col4.empty()
-gif_rm   = col5.empty()
+gif_rm   = col4.empty()
+gif_goat = col5.empty()
 
 # --- Display static GIFs before loop ---
-# Order: Hourglass, Penguin, Goat, Running Man
+# Order: Hourglass, Penguin, Running Man, Goat
 gif_hg.image(GIF_URLS['Hourglass'])
 gif_pn.image(GIF_URLS['Penguin'])
-gif_goat.image(GIF_URLS['Goat'])
 gif_rm.image(GIF_URLS['Running Man'])
+gif_goat.image(GIF_URLS['Goat'])
 
 # --- Run digital timer only ---
 if st.button("Start Timer"):
