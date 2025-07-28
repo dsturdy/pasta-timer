@@ -37,6 +37,8 @@ pasta_times = {
     "Penne":    11*60,
     "Fusilli":  10*60,
     "Ravioli":   5*60,
+    "Bow Tie":   11*60,
+    "Spongebob Squarepants Shaped Macaroni & Cheese": 11*60,
     "Custom":   None
 }
 sel = st.selectbox("Pick your pasta:", list(pasta_times.keys()))
